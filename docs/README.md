@@ -1,38 +1,28 @@
-# Gitzbook
+# The Goblin Field Guide
 
-A lightweight, customizable static site generator for documentation — inspired by GitBook, built for flexibility.
+Welcome to the most comprehensive reference on goblinkind ever assembled. This guide is the product of decades of fieldwork by the Royal Cryptozoological Society, compiled from firsthand observations, recovered goblin manuscripts, and only a moderate number of poisoned darts to the neck.
 
-## Why Gitzbook?
+## Why Study Goblins?
 
-- **Markdown-first** — write your docs in plain Markdown files
-- **Simple navigation** — define your sidebar with a `SUMMARY.md` file
-- **Full-text search** — client-side search works out of the box
-- **Plugin system** — extend and customize with simple JavaScript hooks
-- **Live reload** — see your changes instantly during development
-- **No lock-in** — it's your code, do what you want with it
+Goblins are among the most misunderstood creatures in the known world. Often dismissed as mere pests, they possess a rich culture, a surprisingly advanced understanding of mechanical engineering, and a culinary tradition that — while not for the faint of stomach — is genuinely innovative.
 
-## Quick Start
+This field guide covers everything from goblin social structures and battlefield tactics to their peculiar relationship with mushrooms and their legendary tunnel networks.
 
-```bash
-# Build the documentation
-npm run build
+## A Word of Caution
 
-# Start the dev server with live reload
-npm run serve
-```
+If you are reading this in the field, please be aware that goblins can smell parchment from up to forty meters away. They consider the act of writing about them without permission to be a declaration of war. The Society accepts no liability for any consequences arising from the use of this guide in goblin-adjacent territories.
 
-Your site will be available at `http://localhost:4000`.
+## Quick Reference
 
-## Project Structure
+| Fact | Detail |
+|------|--------|
+| Average height | 0.9 - 1.2 meters |
+| Lifespan | 60 - 80 years |
+| Diet | Omnivorous (heavy mushroom bias) |
+| Languages | Gob'zhar (primary), Common (trade) |
+| Temperament | Curious, territorial, grudge-holding |
+| Population | Estimated 2.3 million worldwide |
 
-```
-your-project/
-├── docs/               # Your documentation files
-│   ├── SUMMARY.md      # Navigation structure
-│   ├── README.md       # Landing page
-│   └── ...             # Other markdown files
-├── plugins/            # Custom plugins (optional)
-├── gitzbook.json       # Configuration
-├── _book/              # Built output (generated)
-└── package.json
-```
+## How to Use This Guide
+
+Navigate using the sidebar to explore different aspects of goblin civilization. Each section is designed to be read independently, so feel free to jump to whatever topic interests you most — or whatever topic is most immediately relevant to your survival.
