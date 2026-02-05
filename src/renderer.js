@@ -88,6 +88,97 @@ function buildPrevNext(prev, next, basePath) {
 }
 
 /**
+ * Build breadcrumb navigation HTML from the navigation tree.
+ */
+function buildBreadcrumbs(nav, currentPath, basePath) {
+  const trail = findBreadcrumbTrail(nav, currentPath);
+  if (!trail || trail.length === 0) return '';
+
+  let html = '<nav class="breadcrumbs" aria-label="Breadcrumb">\n<ol>\n';
+  html += `  <li><a href="${basePath}index.html">Home</a></li>\n`;
+  for (let i = 0; i < trail.length; i++) {
+    const item = trail[i];
+    const isLast = i === trail.length - 1;
+    if (isLast) {
+      html += `  <li class="current" aria-current="page">${escapeHtml(item.title)}</li>\n`;
+    } else if (item.path) {
+      const href = basePath + item.path.replace(/\.md$/, '.html');
+      html += `  <li><a href="${href}">${escapeHtml(item.title)}</a></li>\n`;
+    } else {
+      html += `  <li>${escapeHtml(item.title)}</li>\n`;
+    }
+  }
+  html += '</ol>\n</nav>\n';
+  return html;
+}
+
+function findBreadcrumbTrail(nav, targetPath, trail = []) {
+  for (const item of nav) {
+    if (item.path === targetPath) {
+      return [...trail, item];
+    }
+    if (item.children && item.children.length > 0) {
+      const found = findBreadcrumbTrail(item.children, targetPath, [...trail, item]);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+/**
+ * Build a "table of contents" (right sidebar) from extracted headings.
+ */
+function buildTableOfContents(headings) {
+  if (!headings || headings.length === 0) return '';
+
+  let html = '<nav class="toc" aria-label="On this page">\n';
+  html += '<h3 class="toc-title">On this page</h3>\n';
+  html += '<ul class="toc-list">\n';
+
+  for (const heading of headings) {
+    const indent = heading.level - 2; // h2 = 0, h3 = 1, h4 = 2
+    html += `<li class="toc-item toc-level-${indent}"><a href="#${heading.slug}">${escapeHtml(heading.text)}</a></li>\n`;
+  }
+
+  html += '</ul>\n</nav>\n';
+  return html;
+}
+
+/**
+ * Build Open Graph and SEO meta tags from frontmatter.
+ */
+function buildMetaTags(pageData, config) {
+  const tags = [];
+  const description = pageData.description || '';
+  const title = pageData.title || config.title;
+
+  if (description) {
+    tags.push(`<meta name="description" content="${escapeHtml(description)}">`);
+    tags.push(`<meta property="og:description" content="${escapeHtml(description)}">`);
+  }
+
+  tags.push(`<meta property="og:title" content="${escapeHtml(title)}">`);
+  tags.push(`<meta property="og:type" content="article">`);
+
+  if (config.url) {
+    const pagePath = pageData.path ? pageData.path.replace(/\.md$/, '.html') : '';
+    const canonical = config.url.replace(/\/$/, '') + '/' + pagePath;
+    tags.push(`<link rel="canonical" href="${canonical}">`);
+    tags.push(`<meta property="og:url" content="${canonical}">`);
+  }
+
+  if (config.title) {
+    tags.push(`<meta property="og:site_name" content="${escapeHtml(config.title)}">`);
+  }
+
+  if (pageData.frontmatter && pageData.frontmatter.image) {
+    tags.push(`<meta property="og:image" content="${escapeHtml(pageData.frontmatter.image)}">`);
+  }
+
+  return tags.join('\n');
+}
+
+/**
  * Calculate the relative base path from a given page to the root.
  * e.g., "chapter1/section1.md" -> "../"
  */
@@ -109,6 +200,9 @@ module.exports = {
   renderPage,
   buildSidebar,
   buildPrevNext,
+  buildBreadcrumbs,
+  buildTableOfContents,
+  buildMetaTags,
   getBasePath,
   escapeHtml,
 };

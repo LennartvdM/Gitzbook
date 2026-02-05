@@ -1,8 +1,10 @@
-// Gitzbook client-side search
+// Gitzbook client-side search with FlexSearch
 (function () {
   var searchInput = document.getElementById('search-input');
   var searchResults = document.getElementById('search-results');
   var searchIndex = null;
+  var flexIndex = null;
+  var rawData = null;
 
   // Determine base path from current page
   function getBasePath() {
@@ -18,14 +20,41 @@
 
   var basePath = getBasePath();
 
-  // Load search index
+  // Load search index and build FlexSearch index
   function loadIndex() {
-    if (searchIndex) return Promise.resolve(searchIndex);
+    if (flexIndex) return Promise.resolve(flexIndex);
 
     return fetch(basePath + 'assets/search-index.json')
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        searchIndex = data;
+        rawData = data;
+
+        // Check if FlexSearch is available (loaded from CDN or bundled)
+        // Fall back to built-in search if not
+        if (typeof FlexSearch !== 'undefined') {
+          flexIndex = new FlexSearch.Document({
+            document: {
+              id: 'id',
+              index: ['title', 'body'],
+              store: ['title', 'path', 'body'],
+            },
+            tokenize: 'forward',
+            resolution: 9,
+          });
+
+          for (var i = 0; i < data.length; i++) {
+            flexIndex.add({
+              id: i,
+              title: data[i].title,
+              path: data[i].path,
+              body: data[i].body,
+            });
+          }
+        } else {
+          // Fallback: use built-in search
+          searchIndex = data;
+        }
+
         return data;
       })
       .catch(function () {
@@ -35,7 +64,44 @@
   }
 
   function search(query) {
-    if (!searchIndex || !query.trim()) return [];
+    if (!query.trim()) return [];
+
+    // Use FlexSearch if available
+    if (flexIndex) {
+      return searchFlexSearch(query);
+    }
+
+    // Fallback: basic term matching
+    return searchBasic(query);
+  }
+
+  function searchFlexSearch(query) {
+    var results = flexIndex.search(query, { limit: 10, enrich: true });
+    var seen = {};
+    var merged = [];
+
+    for (var field = 0; field < results.length; field++) {
+      var fieldResults = results[field].result;
+      for (var i = 0; i < fieldResults.length; i++) {
+        var doc = fieldResults[i].doc;
+        var id = fieldResults[i].id;
+        if (!seen[id]) {
+          seen[id] = true;
+          merged.push({
+            page: { title: doc.title, path: doc.path, body: doc.body },
+            score: results[field].field === 'title' ? 10 : 1,
+          });
+        }
+      }
+    }
+
+    // Sort by score (title matches first)
+    merged.sort(function (a, b) { return b.score - a.score; });
+    return merged.slice(0, 10);
+  }
+
+  function searchBasic(query) {
+    if (!searchIndex) return [];
 
     var terms = query.toLowerCase().split(/\s+/).filter(Boolean);
     var results = [];
@@ -126,7 +192,22 @@
 
   if (!searchInput || !searchResults) return;
 
-  // Load index on first focus
+  // Load FlexSearch from CDN
+  var script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/gh/nicholasgasior/flexsearch@0.7.41/dist/flexsearch.bundle.min.js';
+  script.async = true;
+  script.onload = function () {
+    // Pre-load the index if search input exists
+    loadIndex();
+  };
+  script.onerror = function () {
+    // FlexSearch unavailable, fall back to basic search
+    console.warn('FlexSearch CDN unavailable, using basic search.');
+    loadIndex();
+  };
+  document.head.appendChild(script);
+
+  // Load index on first focus as fallback
   searchInput.addEventListener('focus', function () {
     loadIndex();
   });
