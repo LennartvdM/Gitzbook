@@ -11,13 +11,21 @@
     "serve": "node src/cli.js serve",
     "dev": "node src/cli.js serve --watch"
   },
-  "keywords": ["documentation", "static-site-generator", "markdown", "gitbook"],
+  "keywords": [
+    "documentation",
+    "static-site-generator",
+    "markdown",
+    "gitbook"
+  ],
   "license": "MIT",
   "dependencies": {
+    "chokidar": "^3.6.0",
+    "flexsearch": "^0.8.212",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.9.0",
+    "html-minifier-terser": "^7.2.0",
     "markdown-it": "^14.0.0",
     "markdown-it-anchor": "^9.0.0",
-    "highlight.js": "^11.9.0",
-    "chokidar": "^3.6.0",
     "ws": "^8.16.0"
   }
 }
