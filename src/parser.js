@@ -4,6 +4,7 @@ const markdownIt = require('markdown-it');
 const markdownItAnchor = require('markdown-it-anchor');
 const hljs = require('highlight.js');
 const matter = require('gray-matter');
+const { preprocessGitBook } = require('./gitbook-preprocessor');
 
 /**
  * Create a configured markdown-it instance.
@@ -330,7 +331,13 @@ function flattenNav(nav) {
  */
 function parseMarkdownFile(filePath, md) {
   const raw = fs.readFileSync(filePath, 'utf-8');
-  const { data: frontmatter, content } = matter(raw);
+  const { data: frontmatter, content: rawContent } = matter(raw);
+
+  // Run GitBook syntax preprocessor before markdown-it rendering.
+  // This transforms {% hint %}, {% tabs %}, {% embed %}, etc. into
+  // standard markdown/HTML that markdown-it can process.
+  const content = preprocessGitBook(rawContent);
+
   const html = md.render(content);
 
   // Extract first h1 as title fallback
