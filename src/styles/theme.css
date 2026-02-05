@@ -652,6 +652,99 @@ pre.hljs:hover .copy-btn {
 [data-theme="dark"] .admonition-danger { background: rgba(243, 139, 168, 0.08); }
 [data-theme="dark"] .admonition-info { background: rgba(137, 220, 235, 0.08); }
 
+/* Content reference cards (from GitBook {% content-ref %}) */
+.content-ref {
+  margin: 0 0 16px;
+  padding: 12px 20px;
+  border: 1px solid var(--code-border);
+  border-radius: 6px;
+  background: var(--code-bg);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.content-ref:hover {
+  border-color: var(--link-color);
+  background: rgba(0, 140, 255, 0.03);
+}
+
+.content-ref a {
+  font-weight: 500;
+}
+
+.content-ref p {
+  margin: 0;
+}
+
+/* Embed containers (from GitBook {% embed %}) */
+.embed-container {
+  margin: 0 0 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--code-border);
+}
+
+.embed-container iframe {
+  display: block;
+}
+
+.embed-link {
+  margin: 0 0 16px;
+  padding: 12px 20px;
+  border: 1px solid var(--code-border);
+  border-radius: 6px;
+  background: var(--code-bg);
+}
+
+.embed-link a {
+  word-break: break-all;
+}
+
+/* File download links (from GitBook {% file %}) */
+.file-download {
+  margin: 0 0 16px;
+  padding: 12px 20px;
+  border: 1px solid var(--code-border);
+  border-radius: 6px;
+  background: var(--code-bg);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-download::before {
+  content: '\2913';
+  font-size: 1.1rem;
+  color: var(--link-color);
+}
+
+.file-download a {
+  font-weight: 500;
+}
+
+/* Titled code blocks (from GitBook {% code title="..." %}) */
+.code-block-titled {
+  margin: 0 0 16px;
+  border: 1px solid var(--code-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.code-block-title {
+  padding: 8px 16px;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--code-border);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--blockquote-text);
+}
+
+.code-block-titled pre.hljs {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
 /* Tables */
 .page-content table {
   width: 100%;
