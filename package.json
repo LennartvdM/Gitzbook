@@ -1,0 +1,23 @@
+{
+  "name": "gitzbook",
+  "version": "1.0.0",
+  "description": "A custom GitBook-like static site generator for documentation",
+  "main": "src/index.js",
+  "bin": {
+    "gitzbook": "./src/cli.js"
+  },
+  "scripts": {
+    "build": "node src/cli.js build",
+    "serve": "node src/cli.js serve",
+    "dev": "node src/cli.js serve --watch"
+  },
+  "keywords": ["documentation", "static-site-generator", "markdown", "gitbook"],
+  "license": "MIT",
+  "dependencies": {
+    "markdown-it": "^14.0.0",
+    "markdown-it-anchor": "^9.0.0",
+    "highlight.js": "^11.9.0",
+    "chokidar": "^3.6.0",
+    "ws": "^8.16.0"
+  }
+}

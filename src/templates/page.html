@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ pageTitle }} — {{ bookTitle }}</title>
+  <link rel="stylesheet" href="{{ basePath }}assets/theme.css">
+  <link rel="stylesheet" href="{{ basePath }}assets/highlight.css">
+  {{ extraHead }}
+</head>
+<body>
+  {{ extraBodyStart }}
+  <button class="sidebar-toggle" aria-label="Toggle sidebar">&#9776;</button>
+
+  <div class="book-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1><a href="{{ basePath }}index.html">{{ bookTitle }}</a></h1>
+      </div>
+      <div class="search-wrapper" style="position: relative;">
+        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+        <div class="search-results" id="search-results"></div>
+      </div>
+      <div class="sidebar-scroll">
+        {{ sidebar }}
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="page-content">
+        {{ content }}
+        {{ prevNext }}
+      </div>
+    </main>
+  </div>
+
+  <div class="reload-indicator" id="reload-indicator">Reloading...</div>
+
+  <script src="{{ basePath }}assets/search.js"></script>
+  <script>
+    // Sidebar toggle for mobile
+    document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('open');
+    });
+
+    // Expand parent nav items that contain the active link
+    document.querySelectorAll('.nav-item.expanded > .nav-children').forEach(function(el) {
+      el.classList.add('expanded');
+    });
+
+    // Make all nav sections with children collapsible
+    document.querySelectorAll('.nav-item').forEach(function(item) {
+      var children = item.querySelector('.nav-children');
+      if (!children) return;
+      var link = item.querySelector('a, .nav-group-title');
+      if (!link) return;
+      link.addEventListener('click', function(e) {
+        if (item.classList.contains('active')) return;
+        if (link.tagName === 'SPAN') {
+          e.preventDefault();
+          children.classList.toggle('expanded');
+          item.classList.toggle('expanded');
+        }
+      });
+    });
+  </script>
+  {{ liveReloadScript }}
+  {{ extraBodyEnd }}
+</body>
+</html>
