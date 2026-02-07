@@ -582,7 +582,7 @@ export default function App() {
   return (
     <div style={{
       fontFamily: "'Inter', system-ui, sans-serif", minHeight: "100vh",
-      background: C.bg, display: "flex", alignItems: "center", justifyContent: "center",
+      background: C.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       padding: "32px 20px", WebkitFontSmoothing: "antialiased",
     }}>
       <div data-card style={{
@@ -657,12 +657,9 @@ export default function App() {
       )}
 
       <div style={{
-        position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)",
-        padding: "8px 20px", borderRadius: 100, fontSize: 13, fontWeight: 500,
-        color: C.tm, background: "white", boxShadow: "0 2px 16px rgba(0,0,0,0.07)",
-      }}>
-        Hover sidebar links to preview · Click preview to expand
-      </div>
+        width: 160, height: 3, borderRadius: 2, background: "white",
+        marginTop: 14, flexShrink: 0,
+      }} />
     </div>
   );
 }
