@@ -398,7 +398,7 @@ function ExpandOverlay({ from, to, page, onDone, contentWidth }) {
   const raf = useRef(null);
 
   const PREVIEW_W = 340;
-  const INNER_W = contentWidth || Math.round(PREVIEW_W / 0.54);
+  const INNER_W = contentWidth || 780;
   const PREVIEW_SCALE = PREVIEW_W / INNER_W;
 
   useEffect(() => {
@@ -407,7 +407,7 @@ function ExpandOverlay({ from, to, page, onDone, contentWidth }) {
     const inner = innerRef.current;
     const fadeR = fadeRRef.current;
     const fadeB = fadeBRef.current;
-    const dur = 2000;
+    const dur = 500;
     let on = true;
 
     const ease = (t) => 1 - Math.exp(-6 * t) * (1 + 6 * t * 0.15);
@@ -471,8 +471,10 @@ function ExpandOverlay({ from, to, page, onDone, contentWidth }) {
         width: INNER_W, transform: `scale(${PREVIEW_SCALE})`, transformOrigin: "top left",
         opacity: 0.68, pointerEvents: "none", userSelect: "none",
       }}>
-        <div style={{ padding: "40px 48px", maxWidth: 600 }}>
-          <PageContent page={page} />
+        <div style={{ padding: "40px 48px" }}>
+          <div style={{ maxWidth: 600 }}>
+            <PageContent page={page} />
+          </div>
         </div>
       </div>
       <div ref={fadeRRef} style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 40, background: "linear-gradient(to right, transparent, white)", pointerEvents: "none", zIndex: 1 }} />
