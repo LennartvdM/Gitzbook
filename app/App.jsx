@@ -701,11 +701,16 @@ export default function App() {
         <div
           onMouseDown={onThumbDown}
           style={{
-            position: "absolute", right: -14, top: scrollInfo.thumbTop,
-            width: 3, height: scrollInfo.thumbH, borderRadius: 2,
-            background: "white", cursor: "grab", transition: "opacity 0.15s ease",
+            position: "absolute", right: -24, top: scrollInfo.thumbTop - 8,
+            width: 24, height: scrollInfo.thumbH + 16, cursor: "grab",
+            display: "flex", alignItems: "center", justifyContent: "center",
           }}
-        />
+        >
+          <div style={{
+            width: 2, height: scrollInfo.thumbH, borderRadius: 1,
+            background: "white",
+          }} />
+        </div>
       )}
       </div>
 
