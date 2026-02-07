@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && npm run build"
+  command = "npm install && npm run build && cd examples/surface-preview && npm install && npm run build && cp -r dist/* ../../_book/"
   publish = "_book"
 
 [build.environment]
