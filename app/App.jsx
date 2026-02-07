@@ -707,7 +707,7 @@ export default function App() {
           }}
         >
           <div style={{
-            width: 2, height: scrollInfo.thumbH, borderRadius: 1,
+            width: 4, height: scrollInfo.thumbH, borderRadius: 2,
             background: "white",
           }} />
         </div>
