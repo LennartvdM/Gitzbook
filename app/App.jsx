@@ -495,6 +495,8 @@ export default function App() {
   const [dispActive, setDispActive] = useState("intro");
   const mainRef = useRef(null);
   const [contentWidth, setContentWidth] = useState(null);
+  const [scrollInfo, setScrollInfo] = useState({ thumbTop: 0, thumbH: 0, show: false });
+  const dragRef = useRef({ active: false, startY: 0, startScroll: 0 });
 
   useEffect(() => {
     if (!mainRef.current) return;
@@ -506,6 +508,32 @@ export default function App() {
     ro.observe(mainRef.current);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el) return;
+    const update = () => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      if (scrollHeight <= clientHeight) {
+        setScrollInfo({ thumbTop: 0, thumbH: 0, show: false });
+        return;
+      }
+      const pad = 16;
+      const trackH = clientHeight - pad * 2;
+      const thumbH = Math.max(36, (clientHeight / scrollHeight) * trackH);
+      const maxScroll = scrollHeight - clientHeight;
+      const thumbTop = pad + (scrollTop / maxScroll) * (trackH - thumbH);
+      setScrollInfo({ thumbTop, thumbH, show: true });
+    };
+    el.addEventListener("scroll", update);
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    const mo = new MutationObserver(update);
+    mo.observe(el, { childList: true, subtree: true });
+    update();
+    const t = setTimeout(update, 200);
+    return () => { el.removeEventListener("scroll", update); ro.disconnect(); mo.disconnect(); clearTimeout(t); };
+  }, [active, dispActive]);
 
   const [expandData, setExpandData] = useState(null);
 
@@ -575,6 +603,30 @@ export default function App() {
     return () => document.removeEventListener("mousemove", onMove);
   }, [vis, hovId]);
 
+  const onThumbDown = useCallback((e) => {
+    e.preventDefault();
+    const el = mainRef.current;
+    if (!el) return;
+    dragRef.current = { active: true, startY: e.clientY, startScroll: el.scrollTop };
+    const onMove = (ev) => {
+      if (!dragRef.current.active) return;
+      const { scrollHeight, clientHeight } = el;
+      const pad = 16;
+      const trackH = clientHeight - pad * 2;
+      const thumbH = Math.max(36, (clientHeight / scrollHeight) * trackH);
+      const maxScroll = scrollHeight - clientHeight;
+      const dy = ev.clientY - dragRef.current.startY;
+      el.scrollTop = dragRef.current.startScroll + (dy / (trackH - thumbH)) * maxScroll;
+    };
+    const onUp = () => {
+      dragRef.current.active = false;
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, []);
+
   const hovPage = PAGES.find(p => p.id === hovId);
   const activePage = PAGES.find(p => p.id === dispActive);
   const expandPage = expandData ? PAGES.find(p => p.id === expandData.pageId) : null;
@@ -585,8 +637,10 @@ export default function App() {
       background: C.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       padding: "32px 20px", WebkitFontSmoothing: "antialiased",
     }}>
+      <style>{`[data-card] main::-webkit-scrollbar{display:none}[data-card] main{scrollbar-width:none;-ms-overflow-style:none}`}</style>
+      <div style={{ position: "relative", width: "100%", maxWidth: 1020 }}>
       <div data-card style={{
-        display: "flex", width: "100%", maxWidth: 1020, height: "min(680px, calc(100vh - 64px))",
+        display: "flex", width: "100%", height: "min(680px, calc(100vh - 64px))",
         background: "white", borderRadius: 20, overflow: "hidden",
         boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 8px 40px rgba(0,0,0,0.07)",
         position: "relative",
@@ -642,6 +696,17 @@ export default function App() {
             </div>
           </div>
         </main>
+      </div>
+      {scrollInfo.show && (
+        <div
+          onMouseDown={onThumbDown}
+          style={{
+            position: "absolute", right: -14, top: scrollInfo.thumbTop,
+            width: 3, height: scrollInfo.thumbH, borderRadius: 2,
+            background: "white", cursor: "grab", transition: "opacity 0.15s ease",
+          }}
+        />
+      )}
       </div>
 
       <SurfacePreview page={hovPage} triggerEl={trigEl.current} visible={vis} elRef={surfEl} initialMouseX={initialMouseX.current} onClickPreview={onClickPreview} contentWidth={contentWidth} />
